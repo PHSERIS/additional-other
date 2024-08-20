@@ -22,7 +22,8 @@ class flexField extends \ExternalModules\AbstractExternalModule
      *      Every flex field must have its corresponding text field for storing the flex field data
      *      Add the @FLEXFIELD action-tag to the text field.
      *      The action-tag must include a limit of allowed elements. Use the following form:
-     *          - @FLEXFIELD=(10, Primary field)
+     *          - @FLEXFIELD=(Primary field,other-option-code-value,limit)
+     * ------------------------- review the comments below ---------------------
      *      The action-tag must specify the field (name) it corresponds to. For instance:
      *          - for single item flex-field, i.e. list of phone numbers:  @FLEXFIELD=(limit, Primary field)
      *          - for multiple item flex-field, i.e. medication plus dosage: @FLEXFIELD=(limit, Medication, dosage)
@@ -74,17 +75,35 @@ class flexField extends \ExternalModules\AbstractExternalModule
 //            print "</pre>";
 
             $props = explode(',',$properties['params']);
-            var_dump($properties);
-            $limitCount = $props[0];
-            $flexFieldSource = $props[1];
+            var_dump($props);
+            $flexFieldSource = $props[0];
+            $otherOptionCodeValue = $props[1];
+            $limitCount = $props[2];
 
+            print "This is REDCap::getData\n";
+            print "record before:";
+            var_dump($record);
+            $record = is_null($record) ? $_GET['id'] : $record;
+            print "record after:";
+            var_dump($record);
             $data = REDCap::getData('json', $record, array($fieldName));
 
             var_dump(json_decode($data,TRUE));
+            $retrievedData = json_decode($data,TRUE)[0]['race_flex_field'];
+            var_dump($retrievedData);
             print "</pre>";
 
             $ffData = json_decode($data,TRUE);
-            if(count($ffData)>0){
+            if(count($ffData)>0){ // Data exists and must be rendered
+                print "<pre>";
+                print "inside first if";
+                print "</pre>";
+
+                print $this->flexFieldTriggerCondition($flexFieldSource,$otherOptionCodeValue,$fieldName,$retrievedData,$limitCount);
+//                print $this->buildExistingTextFields($retrievedData,$fieldName);
+
+
+
                 foreach($ffData as $k=>$v){
                     $savedValues = explode(",", $v[$properties["elements_index"]]);
                     $flexOptionsBlank = $this->buildDropDownOptions($this->dropDownOptions($Proj, $flexFieldSource),"");
@@ -115,17 +134,24 @@ class flexField extends \ExternalModules\AbstractExternalModule
                         print "</pre>";
 
 
-                        print $this->flexField2($flexFieldSource,$vvv,$item++,$fieldName,$limitCount,$kkk,$flexOptionsBlank,count($flexOptions));
+//                        print $this->flexField2($flexFieldSource,$vvv,$item++,$fieldName,$limitCount,$kkk,$flexOptionsBlank,count($flexOptions));
 
                     }
                 }
 //                $flexOptions2 = $this->buildDropDownOptions($this->dropDownOptions($Proj, $flexFieldSource),"");
 //                print $this->flexField3($flexFieldSource,$flexOptions2,$item++,$fieldName,$limitCount);
 
-            } else{
-                $flexOptions = $this->buildDropDownOptions($this->dropDownOptions($Proj, $flexFieldSource),"");
+            } else{ // Data does not exist and empty Flex Field must be rendered.
+                // The functionality must be triggered when the answer-choice of "Other" is selected.
+                // Add the client-side code to the "Other" option to add the first flex field.
+                print "<pre>";
+                print "inside first else";
+                print "</pre>";
+
+                print $this->flexFieldTriggerCondition($flexFieldSource,$otherOptionCodeValue,$fieldName,$retrievedData,$limitCount);
+//                $flexOptions = $this->buildDropDownOptions($this->dropDownOptions($Proj, $flexFieldSource),"");
                 $item++;
-                print $this->flexField($flexFieldSource,$flexOptions,$item++,$fieldName,$limitCount);
+//                print $this->flexField($flexFieldSource,$flexOptions,$item++,$fieldName,$limitCount);
             }
         }
     }
@@ -535,5 +561,228 @@ SCRIPT;
         //        print $script3;
     }
 
+
+//    Bugs:
+//          1) an additional flex field is added everytime the condition is met.
+    function flexFieldTriggerCondition($fieldName,$expectedValue,$flexFieldName,$existingValues,$limitCount){
+        $existingValues = explode(",",$existingValues);
+        $currentCount = count($existingValues) + 1;
+        $existingValues = array_reverse($existingValues);
+        $existingValues = "'" . implode("','",$existingValues) . "'";
+        $scriptJS01 = <<<SCRIPT
+<script type="text/javascript">
+<!--here 123-->
+ $(document).ready(function() {   
+     function getValues02(){
+	    var flexString = "";
+	    var objects = $(".flexfield");
+	    var objCount = 0;        
+	    for (var obj of objects) {
+	        
+	        if(objCount == 0){
+	            flexString = obj['value'];
+                // flexString = $("[name=" + obj['name'] + "]").val();
+	            objCount++;
+	        } else {
+	            flexString = flexString + ", " + obj['value'];
+                // flexString = flexString + ", " + $("[name=" + obj['name'] + "]").val();	            
+	        }
+        }
+	    $('[name={$flexFieldName}]').val(flexString);
+	}
+     // I think the rendering code, for existing values, goes here
+     var counter = $currentCount;
+     var limit = $limitCount;
+          $("select[name={$fieldName}]").blur(function () {
+              console.log("Blur on field: " + $(this).prop('name') + "this is its value's length: " + $(this).val().length);
+              if($(this).val() == $expectedValue){
+                  console.log('condition met; expected value was selected');
+                  // Add the .hide() to the next line when ready to deploy
+                  // i.e., $('input[name={flexFieldName}]').after(
+                  $('input[name={$flexFieldName}]').after("<div class=\"row ffInstance\"> <div id=\"test1\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield1\" tabindex=\"0\">" +
+    " <button type=\"button\" class=\"btn btn-info btn-sm\" id=\"addButton\" style=\"padding: 1px 1px 1px 1px;\"><i class=\"fas fa-plus-circle\"></i></button> </div></div>")
+                  // attached the on.blur script to the newly created element
+                    $('[name=flexfield1]').blur(function () {
+                        getValues02();        
+                    }); 
+    
+                     $('#test1').on('click', '#addButton',function( e ) {
+                         console.log("here123");
+                         if(counter <= limit){
+       // e.preventDefault();
+            var id = e.target.id;
+            var container_id = 'test1';
+            // console.log('test123: ' + id);
+            // console.log(e.target);
+            // console.log(e.target.closest('select'));
+            // console.log(e.target.closest('div.container').id);
+
+            var newTextBoxDiv = $(document.createElement('div'))
+         .attr("class", "row pt-2 ffInstance" ,"id", container_id + 'Div' + counter);
+           
+          var element = "<div id=\"test1\" style=\"padding-left: 15px\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield" + counter + "\" tabindex=\"0\">";            
+            
+    newTextBoxDiv.after().html( element +
+          '<button type=\"button\" class=\"btn btn-outline-info btn-sm\" id=\"substractButton\" style=\"padding: 1px 1px 1px 1px;margin-left: 5px;\"><i class="fas fa-minus-circle"></i></button>');
+            
+    newTextBoxDiv.last().appendTo("#" + container_id);
+    
+        // attached the on.blur script to the newly created element
+        $('[name=flexfield'+ counter + ']').blur(function () {
+            getValues02();        
+    }); 
+    
+    counter++;   
+
+    }
+                     })
+    
+              } if($(this).val() != $expectedValue){
+              // Consider adding an else-statement so that whenever the source field is not the expected value
+              // any existing field using the flexfields class are not only removed, but their content is erased.
+              $(".flexfield").closest('div.row').remove();
+              // $("#substractButton").remove();
+              // $("#addButton").remove();
+
+               // $(".flexfield").remove();
+               // $("#test1").remove();
+              counter = 2; // reset counter
+              console.log("inside source field not expected value!!!")
+              
+              }
+    });
+     
+	$(document).on('click', '#substractButton', function( e ) {
+            // e.preventDefault();
+            $(this).closest('div.row').remove();
+            getValues02();           
+            counter--;
+        });
+	
+$('.flexfield').blur(function () {
+                getValues02();
+                console.log("Blur on field: " + $(this).prop('name'));
+    });
+
+    // Now prebuild fields for existing values
+    
+   function myFunction(value, index, array) {
+        console.log(value + " this is index: " + index);
+        var index = array.length - index;
+        if(index == 1){
+            $('input[name={$flexFieldName}]').after("<div class=\"row ffInstance\"> <div id=\"test1\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield1\" tabindex=\"0\" value=\"" + value.trim() + "\" >" +
+    " <button type=\"button\" class=\"btn btn-info btn-sm\" id=\"addButton\" style=\"padding: 1px 1px 1px 1px;\"><i class=\"fas fa-plus-circle\"></i></button> </div></div>")
+                  // attached the on.blur script to the newly created element
+                    $('[name=flexfield1]').blur(function () {
+                        getValues02();        
+                    });
+            
+            $('#test1').on('click', '#addButton',function( e ) {
+                         console.log("here123");
+                         if(counter <= limit){
+       // e.preventDefault();
+            var id = e.target.id;
+            var container_id = 'test1';
+            // console.log('test123: ' + id);
+            // console.log(e.target);
+            // console.log(e.target.closest('select'));
+            // console.log(e.target.closest('div.container').id);
+
+            var newTextBoxDiv = $(document.createElement('div'))
+         .attr("class", "row pt-2 ffInstance" ,"id", container_id + 'Div' + counter);
+           
+          var element = "<div id=\"test1\" style=\"padding-left: 15px\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield" + counter + "\" tabindex=\"0\">";            
+            
+    newTextBoxDiv.after().html( element +
+          '<button type=\"button\" class=\"btn btn-outline-info btn-sm\" id=\"substractButton\" style=\"padding: 1px 1px 1px 1px;margin-left: 5px;\"><i class="fas fa-minus-circle"></i></button>');
+            
+    newTextBoxDiv.last().appendTo("#" + container_id);
+    
+        // attached the on.blur script to the newly created element
+        $('[name=flexfield'+ counter + ']').blur(function () {
+            getValues02();        
+    }); 
+    
+    counter++;   
+
+    }
+                     })
+            
+        } else if (index > 1) {
+            // now prebuild the additional entries, using a minus button
+             console.log("inside else -  this is counter: " + counter);
+             
+             var container_id = 'test1';
+              var newTextBoxDiv = $(document.createElement('div'))
+         .attr("class", "row pt-2 ffInstance" ,"id", container_id + 'Div' + counter);
+             
+             $('input[name={$flexFieldName}]').after("<div class=\"row pt-2 ffInstance\"><div id=\"test1\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield" + index + "\" tabindex=\"0\" value=\"" + value.trim() + "\" >" +
+    " <button type=\"button\" class=\"btn btn-outline-info btn-sm\" id=\"substractButton\" style=\"padding: 1px 1px 1px 1px;margin-left: 5px;\"><i class=\"fas fa-minus-circle\"></i></button> </div> </div>")
+             // newTextBoxDiv.last().appendTo("#" + container_id);
+             
+             // attached the on.blur script to the newly created element
+        $('[name=flexfield'+ index + ']').blur(function () {
+            getValues02();        
+    }); 
+             
+        }
+    }
+    
+    let bucketFlexField = [$existingValues];
+    if(bucketFlexField.length > 0 && bucketFlexField[0].length > 0){
+        bucketFlexField.forEach(myFunction);
+        console.log("Existing Values are being retrieved - bucket size: " + bucketFlexField.length);
+        console.log(bucketFlexField[0].length)
+    }
+ })
+            </script>
+SCRIPT;
+        return $scriptJS01;
+    }
+
+    function buildExistingTextFields($existingValues,$flexFieldName){
+        $existingValues = explode(",",$existingValues);
+        $existingValues = array_reverse($existingValues);
+        $existingValues = "'" . implode("','",$existingValues) . "'";
+        $scriptJS02 = <<<SCRIPT
+<script type="text/javascript">    
+    console.log("here123: 2");
+    
+ $(document).ready(function() {
+    let bucketFlexField = [$existingValues];
+    console.log(bucketFlexField);
+    
+    function myFunction(value, index, array) {
+        console.log(value + " this is index: " + index);
+        var index = array.length - index;
+         var container_id = 'test1';
+         var newTextBoxDiv = $(document.createElement('div')).attr("class", "row pt-2" ,"id", container_id + 'Div' + index);  
+         var element = "<div id=\"test1\" style=\"padding-left: 15px\"> <input aria-labelledby=\"label-select_project\" class=\"x-form-text x-form-field flexfield\" type=\"text\"	name=\"flexfield" + index + "\" tabindex=\"0\" value=\"" + value.trim() + "\">";            
+         var addButton = " <button type=\"button\" class=\"btn btn-info btn-sm\" id=\"addButton\" style=\"padding: 1px 1px 1px 1px;\"><i class=\"fas fa-plus-circle\"></i></button>";   
+    
+         if(index == 1){
+             $('input[name={$flexFieldName}]').after(element + addButton);
+         } else {
+            $('input[name={$flexFieldName}]').after(element +
+            '<button type=\"button\" class=\"btn btn-outline-info btn-sm\" id=\"substractButton\" style=\"padding: 1px 1px 1px 1px;margin-left: 5px;\"><i class="fas fa-minus-circle"></i></button>');
+         }   
+    newTextBoxDiv.last().appendTo("#" + container_id);
+    
+        // attached the on.blur script to the newly created element
+        $('[name=flexfield'+ index + ']').blur(function () {
+            console.log('here');
+    }); 
+        
+    }    
+    
+    bucketFlexField.forEach(myFunction);
+
+
+ }
+ )
+ </script>
+SCRIPT;
+    return $scriptJS02;
+    }
 }
 

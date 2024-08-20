@@ -1,96 +1,24 @@
 {
-  "name": "Flex Field",
+  "name": "Adhoc Field - Additional Other - Oracle Flex Field",
 
   "namespace":"MGB\\flexField",
 
-  "description": "Automate creation of multiple user from uploaded spreadsheet",
+  "description": "The module provides means for adding adhoc fields in case the user must include multiple answers for the same question. The functionality is an homage to Oracle's Flex Field functionality. Currently, the adhoc field is limited to collect data when an option of 'Other' has been selected in a multiple choice field (dropdown field).",
 
-  "versions": [
-    { "0.1": "In the beginning..." }, 
-    { "0.2": "Version bump to deal with issues" }, 
-    { "1.0": "Production ready" },
-    { "1.1.0": "Fix launchDataEntryTrigger call" },
-    { "1.2.0": "Change delimiter  when saving inst_id field of redcap_user_information from - to |" }
+  "framework-version": 15,
+
+  "action-tags": [
+    {
+      "tag": "@ADHOC-OTHER-FIELD",
+      "description": "Add an adhoc text field when the user is expected to provide multiple answers for the same question, i.e. other medications, additional lab values, etc. Add this action tag to a multiple choice field (Dropdown Field) and specify the code of its 'Other' option; the adhoc field will be displayed when the user selects the field's 'Other' option. For example, add @ADHOC-OTHER-FIELD(source-field,code-value,max-instances), where: 1) 'source-field' is the multiple choice field name that contains an option for 'other' (or its equivalent), 2) 'code-value' is the code given to the field's option of 'other' (can be a string or numeric), and 3) max-instances is the limit of additional entries the user is allowed to use."
+    }
   ],
 
   "authors": [
     {
-      "name": "David Clark",
-      "email": "dclark27@partners.org",
-      "institution": "Partners Healthcare"
+      "name": "Eduardo Morales",
+      "email": "emorales7@mgb.org",
+      "institution": "Mass General Brigham"
     }
-  ],
-
-  "permissions": [
-    "redcap_save_record",
-    "redcap_user_rights",
-    "redcap_every_page_top",
-    "redcap_data_entry_form_top",
-    "redcap_survey_page_top",
-    "redcap_data_entry_form"
-  ],
-
-	"links": {
-		"project":[ {
-				"name": "Re-save user's institute_id",
-				"icon": "brick",
-				"url": "resave.php"
-			} ]
- },
-  "project-settings": [
-    {
-      "key": "project-field",
-      "name": "Select the field with the project list",
-      "required": true,
-      "type": "field-list"
-    },
-    {
-      "key": "project-field-mapping",
-      "name": "Specify the project label and project id",
-      "required": true,
-      "type": "sub_settings",
-      "repeatable": true,
-      "sub_settings": [
-        {
-          "key": "project-field-label",
-          "name": "Project label <br> as shown in the respective dropdown field",
-          "required": true,
-          "type": "text"
-        },
-        {
-          "key": "project-field-id",
-          "name": "Project id",
-          "required": true,
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "key": "mod-description",
-      "name": "Add the project and their respective admin along with their API token",
-      "required": true,
-      "type": "sub_settings",
-      "repeatable": true,
-      "sub_settings": [
-        {
-          "key": "project-name",
-          "name": "Project access form",
-          "required": true,
-          "type": "form-list"
-        },
-        {
-          "key": "project-admin",
-          "name": "Project Admin (user name)",
-          "required": true,
-          "type": "text"
-        },
-        {
-          "key": "project-admin-token",
-          "name": "Project Admin's API Token",
-          "required": true,
-          "type": "text"
-        }
-      ]
-    }
-    ]
+  ]
 }
