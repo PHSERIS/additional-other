@@ -1,16 +1,16 @@
 {
-  "name": "Adhoc Field - Additional Other - Oracle Flex Field",
+  "name": "Ad hoc Field - Additional Other - Oracle Flex Field",
 
   "namespace":"MGB\\flexField",
 
-  "description": "The module provides means for adding adhoc fields in case the user must include multiple answers for the same question. The functionality is an homage to Oracle's Flex Field functionality. Currently, the adhoc field is limited to collect data when an option of 'Other' has been selected in a multiple choice field (dropdown field).",
+  "description": "The module provides means for adding ad hoc fields in case the user must include multiple answers for the same question. The functionality is an homage to Oracle's Flex Field functionality. Currently, the ad hoc field is limited to collect data when an option of 'Other' has been selected in a multiple choice field (dropdown field).",
 
   "framework-version": 15,
 
   "action-tags": [
     {
       "tag": "@ADHOC-OTHER-FIELD",
-      "description": "Add an adhoc text field when the user is expected to provide multiple answers for the same question, i.e. other medications, additional lab values, etc. Add this action tag to a multiple choice field (Dropdown Field) and specify the code of its 'Other' option; the adhoc field will be displayed when the user selects the field's 'Other' option. For example, add @ADHOC-OTHER-FIELD(source-field,code-value,max-instances), where: 1) 'source-field' is the multiple choice field name that contains an option for 'other' (or its equivalent), 2) 'code-value' is the code given to the field's option of 'other' (can be a string or numeric), and 3) max-instances is the limit of additional entries the user is allowed to use."
+      "description": "Add an ad hoc text field when the user is expected to provide multiple answers for the same question, i.e. other medications, additional lab values, etc. Add this action tag to a multiple choice field (Dropdown Field) and specify the code of its 'Other' option; the ad hoc field will be displayed when the user selects the field's 'Other' option. For example, add @ADHOC-OTHER-FIELD(source-field,code-value,max-instances), where: 1) 'source-field' is the multiple choice field name that contains an option for 'other' (or its equivalent), 2) 'code-value' is the code given to the field's option of 'other' (can be a string or numeric), and 3) max-instances is the limit of additional entries the user is allowed to use."
     }
   ],
 
