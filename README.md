@@ -1,17 +1,17 @@
- # MGB Adhoc Field - Additional Other - Oracle Flex Field
+ # MGB Ad hoc Field - Additional Other - Oracle Flex Field
 
- The module provides means for adding adhoc fields in case the user must include multiple answers for the same question. The functionality is an homage to Oracle's Flex Field functionality. Currently, the adhoc field is limited to collect data when an option of 'Other' has been selected in a multiple choice field (dropdown field).
+ The module provides means for adding ad hoc fields in case the user must include multiple answers for the same question. The functionality is an homage to Oracle's Flex Field functionality. Currently, the ad hoc field is limited to collect data when an option of 'Other' has been selected in a multiple choice field (dropdown field).
 
 ***
 
 ## How To Use
 
 It is a common practice to have a dropdown field containing an option for "Other" for allowing the participant to manually enter an answer, in a text box field, if the prebuilt answers do not apply to them. 
-It is this the setup needed for using an Adhoc Field, i.e. if the user is expected to provide more than one answer to "other",  adding the addhoc action tag transforms the "other text field" in a field that can be repeated and added on-demand.
+It is this the setup needed for using an ad hoc Field, i.e. if the user is expected to provide more than one answer to "other",  adding the addhoc action tag transforms the "other text field" in a field that can be repeated and added on-demand.
 Here's the expected syntax needed for adding an addhoc action tag:
 
 ```php
-@ADHOC-OTHER-FIELD(source-field,code-value,max-instances)
+@ADHOCFIELD(source-field,code-value,max-instances)
 ```
 where:
  1. 'source-field' is the multiple choice field name that contains an option for 'other' (or its equivalent), 
@@ -20,7 +20,7 @@ where:
 
 ## Where Does the Data Go?
 
-The data entered in every instance of the addhoc field is saved, in a delimited format, in the text field in which the adhoc action tag was added.
+The data entered in every instance of the ad hoc field is saved, in a delimited format, in the text field in which the ad hoc action tag was added.
 In this way, the data is saved can be retrieved through a standard REDCap Report.
 
 ***
