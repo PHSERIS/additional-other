@@ -8,7 +8,7 @@
 
 It is a common practice to have a dropdown field containing an option for "Other" for allowing the participant to manually enter an answer, in a text box field, if the prebuilt answers do not apply to them. 
 It is this the setup needed for using an ad hoc Field, i.e. if the user is expected to provide more than one answer to "other",  adding the addhoc action tag transforms the "other text field" in a field that can be repeated and added on-demand.
-Here's the expected syntax needed for adding an addhoc action tag:
+Here's the expected syntax needed for adding an ad hoc action tag:
 
 ```php
 @ADHOCFIELD(source-field,code-value,max-instances)
@@ -36,3 +36,14 @@ Ed Morales (Mass General Brigham)
 
 ## Project status
 Project is currently on Production and waiting for enhancements.
+
+***
+
+## Downloading it from GitHub
+Please note that if you download this module from GitHub you must:
+- download the latest release
+- the release is a zip file that includes the folder of the module
+- you must rename this folder so it conforms to the External Module Framework expectations. You must replace the dashes with underscores, and prepend the version number with a "v". Here's an example of how this looks like:
+- Downloaded from GitHub: mgb-additional-other-2.3.1
+- Rename it to: mgb_additional_other_v2.3.1
+- Finally, place the renamed folder in your REDCap's modules folder. Keep in mind that it is best to enable modules in a test environment first.
