@@ -1,4 +1,4 @@
-name: Psalm Security Scan
+name: Psalm Static analysis
 
 on: [push, pull_request]
 
@@ -10,10 +10,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Psalm Security Scan
-        uses: docker://ghcr.io/psalm/psalm-security-scan
-        
-      - name: Upload Security Analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Psalm
+        uses: docker://ghcr.io/psalm/psalm-github-actions
         with:
-          sarif_file: results.sarif
+          security_analysis: true
