@@ -9,9 +9,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+        
       - name: Psalm
-        uses: docker://vimeo/psalm-github-actions
+        uses: psalm/psalm-github-actions@2.3.0
+        # uses: docker://vimeo/psalm-github-actions
         with:
            security_analysis: true
            report_file: results.sarif
