@@ -54,7 +54,7 @@ class flexField extends \ExternalModules\AbstractExternalModule
                 $retrievedData = '';
             } else {
                 $data = REDCap::getData('json', $record, array($fieldName));
-                $retrievedData = json_decode($data,TRUE)[0][$fieldName];
+                $retrievedData = $this->escape(json_decode($data,TRUE)[0][$fieldName]);
                 $ffData = json_decode($data,TRUE);
             }
 

@@ -7,7 +7,7 @@
 ## How To Use
 
 It is a common practice to have a dropdown field containing an option for "Other" for allowing the participant to manually enter an answer, in a text box field, if the prebuilt answers do not apply to them. 
-It is this the setup needed for using an ad hoc Field, i.e. if the user is expected to provide more than one answer to "other",  adding the addhoc action tag transforms the "other text field" in a field that can be repeated and added on-demand.
+It is this the setup needed for using an ad hoc Field, i.e. if the user is expected to provide more than one answer to "other",  adding the ad hoc action tag transforms the "other text field" in a field that can be repeated and added on-demand.
 Here's the expected syntax needed for adding an ad hoc action tag:
 
 ```php
@@ -20,8 +20,8 @@ where:
 
 ## Where Does the Data Go?
 
-The data entered in every instance of the ad hoc field is saved, in a delimited format, in the text field in which the ad hoc action tag was added.
-In this way, the data is saved can be retrieved through a standard REDCap Report.
+The data in every instance of the ad hoc field is saved, in a pipe-delimited format, in the text field in which the ad hoc action tag was added.
+In this way, the saved data can be retrieved through a standard REDCap Report.
 
 ***
 
@@ -36,6 +36,14 @@ Ed Morales (Mass General Brigham)
 
 ## Project status
 Project is currently on Production and waiting for enhancements.
+
+## Enhancement Roadmap
+Please note that the module is a proof of concept of a REDCap Flex Field, as described by the references above.
+That is, the following set of enhancement are known issues that have been prioritized by users in the community.
+If there are more enhancements/issues you've identified, feel free to report them in the REDCap Community or file an issue in the module's GitHub repository.
+
+- incorporate the BioPortal field functionality into the ad hoc module
+- provide support for several ad hoc fields per page
 
 ***
 
