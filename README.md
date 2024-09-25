@@ -27,9 +27,9 @@ In this way, the data is saved can be retrieved through a standard REDCap Report
 
 ## More Information Can Be Found on:
 
-- [GitHub](https://github.com/PHSERIS/mgb-additional-other) 
-- [MGB GitLab](https://gitlab-scm.partners.org/redcap_edc/mgb-flex-field)
-- [Rerefence](https://docs.oracle.com/cd/A60725_05/html/comnls/us/fnd/10gch5.htm)
+- [ ] [GitHub](https://github.com/PHSERIS/mgb-additional-other) 
+- [ ] [MGB GitLab](https://gitlab-scm.partners.org/redcap_edc/mgb-flex-field)
+- [ ] [Rerefence](https://docs.oracle.com/cd/A60725_05/html/comnls/us/fnd/10gch5.htm)
 
 ## Authors and acknowledgment
 Ed Morales (Mass General Brigham)

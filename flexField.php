@@ -29,17 +29,16 @@ class flexField extends \ExternalModules\AbstractExternalModule
      *          - @FLEXFIELD=(Primary field,other-option-code-value,limit)
      */
 
-    function __construct()
+    function setter()
     {
-        parent::__construct();
-
-        // ADD SOME CONTEXT TO THE GLOBALS FOR THIS MODULE:
+        // Defining the Action Tag Name
         $this->modulesActionTagName = "@ADHOCFIELD";
     }
     function redcap_data_entry_form_top($project_id, $record, $instrument, $event_id, $group_id, $repeat_instance)
     {
         global $Proj;
 
+        $this->setter();
         $flexFields = getFieldsWithThisActionTag($this->modulesActionTagName, $instrument, $Proj);
         $item = 0;
         foreach($flexFields as $fieldName=>$properties){
@@ -111,7 +110,7 @@ class flexField extends \ExternalModules\AbstractExternalModule
      var limit = $limitCount;
           $("select[name={$fieldName}]").blur(function () {
               console.log("Blur on field: " + $(this).prop('name') + "this is its value's length: " + $(this).val().length);
-              if($(this).val() == $expectedValue){
+              if($(this).val() == $expectedValue && $('#addButton').length < 1){
                   console.log('condition met; expected value was selected');
                   // Add the .hide() to the next line when ready to deploy
                   // i.e., $('input[name={flexFieldName}]').after(
@@ -238,7 +237,7 @@ SCRIPT;
     function redcap_survey_page_top($project_id, $record, $instrument, $event_id, $group_id, $survey_hash, $response_id, $repeat_instance)
     {
         global $Proj;
-
+        $this->setter();
         $flexFields = getFieldsWithThisActionTag($this->modulesActionTagName, $instrument, $Proj);
 
         foreach($flexFields as $fieldName=>$properties){
