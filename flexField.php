@@ -54,7 +54,7 @@ class flexField extends \ExternalModules\AbstractExternalModule
                 $retrievedData = '';
             } else {
                 $data = REDCap::getData('json', $record, array($fieldName));
-                $retrievedData = $this->escape(json_decode($data,TRUE)[0][$fieldName]);
+                $retrievedData = json_decode($data,TRUE)[0][$fieldName];
                 $ffData = json_decode($data,TRUE);
             }
 
@@ -82,7 +82,7 @@ class flexField extends \ExternalModules\AbstractExternalModule
         } else {
             $existingValues = explode("|",$existingValues);
             $currentCount = count($existingValues) + 1;
-            $existingValues = array_reverse($existingValues);
+            $existingValues = $this->escape(array_reverse($existingValues));
             $existingValues = "'" . implode("','",$existingValues) . "'";
         }
 
